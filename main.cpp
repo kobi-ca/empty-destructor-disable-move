@@ -1,9 +1,13 @@
 #include <memory>
+#include <type_traits>
 
 namespace Ex1 {
     struct Test {};
     // Test t(in); <-- copy constructor
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
 }
 
 namespace Ex2 {
@@ -11,14 +15,20 @@ namespace Ex2 {
         std::unique_ptr<int> i_;
     };
     // Test t(&& in); <-- move constructor
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
 }
 
 namespace Ex2_1 {
     struct Test {
         std::unique_ptr<int> i_;
     };
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
 }
 
 namespace Ex3 {
@@ -26,7 +36,10 @@ namespace Ex3 {
         std::unique_ptr<int> i_;
         ~Test() {}
     };
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
 }
 
 namespace Ex4 {
@@ -36,7 +49,10 @@ namespace Ex4 {
         Test() = default;
         ~Test() {}
     };
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
 }
 
 namespace Ex5 {
@@ -46,7 +62,10 @@ namespace Ex5 {
         Test() = default;
         ~Test() {}
     };
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
 }
 
 namespace Ex6 {
@@ -54,7 +73,10 @@ namespace Ex6 {
         std::unique_ptr<int> i_;
         ~Test() = default;
     };
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
 }
 
 namespace Ex7 {
@@ -64,7 +86,22 @@ namespace Ex7 {
         Test() = default; // needed since we are bring _a_ ctor (even if this is a =default one)
         ~Test() = default;
     };
-    void f(Test t) {}
+    void f(Test t) {
+      static_assert(std::is_copy_constructible_v<Test>);
+      static_assert(std::is_move_constructible_v<Test>);
+    }
+}
+
+namespace Ex8 {
+  struct Test {
+    int i_;
+    int j_;
+    ~Test() {}
+  };
+  void f(Test t) {
+    static_assert(std::is_copy_constructible_v<Test>);
+    static_assert(std::is_move_constructible_v<Test>);
+  }
 }
 
 int main()
@@ -115,5 +152,10 @@ int main()
     {
         Ex7::Test t;
         f(std::move(t));   // yes, this works if I bring =default of && ctor
+    }
+
+    {
+      Ex8::Test t;
+      f(t);   // yes, this works if I bring =default of && ctor
     }
 }
