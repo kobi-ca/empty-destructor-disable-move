@@ -93,9 +93,11 @@ namespace Ex7 {
 }
 
 namespace Ex8 {
-  struct Test {
+  class Test {
     int i_;
     int j_;
+    std::string s_;
+  public:
     ~Test() {}
   };
   void f(Test t) {
